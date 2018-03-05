@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>OktraControllerDeployment.qml</file>
+        <file>PiDeployment.qml</file>
+        <file>SelectRemotePlatform.qml</file>
+    </qresource>
+</RCC>

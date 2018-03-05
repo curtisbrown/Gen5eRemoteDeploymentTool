@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/status">
+        <file>images/fail.png</file>
+        <file>images/inProgress.gif</file>
+        <file>images/pass.png</file>
+        <file>images/ctdiLogo.png</file>
+    </qresource>
+</RCC>
