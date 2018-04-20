@@ -168,10 +168,11 @@ Rectangle {
                                     target: guiAI.getPi(index)
                                     onUpdateStatusChanged: {
                                         if (guiAI.getPi(index).updateStatus === Enums.UPDATE_FAILED ||
-                                                guiAI.getPi(index).updateStatus === Enums.UPDATE_SUCCESS)
-                                        statusAnimation.duration = 10
-                                        statusAnimation.loops = 1
-                                        statusAnimation.restart()
+                                                guiAI.getPi(index).updateStatus === Enums.UPDATE_SUCCESS) {
+                                            statusAnimation.duration = 10
+                                            statusAnimation.loops = 1
+                                            statusAnimation.restart()
+                                        }
                                     }
                                 }
                             }
