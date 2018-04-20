@@ -141,6 +141,7 @@ Rectangle {
                                 var temp = subnet + "." + (index + 1)
                                 console.log("deploying to Pi via" + temp)
                                 guiAI.getPi(index).processRequest(temp)
+                                statusAnimation.start()
                             }
                         }
                         Rectangle {
@@ -155,12 +156,23 @@ Rectangle {
                                 source: statusImages[guiAI.getPi(index).updateStatus]
 
                                 RotationAnimator {
+                                    id: statusAnimation
                                     target: statusImage;
                                     from: 0;
                                     to: 360;
                                     duration: 2000;
                                     loops: Animation.Infinite
-                                    running: guiAI.getPi(index).updateStatus === 1  // Index for Enums.IN_PROGRESS
+                                }
+
+                                Connections {
+                                    target: guiAI.getPi(index)
+                                    onUpdateStatusChanged: {
+                                        if (guiAI.getPi(index).updateStatus === Enums.UPDATE_FAILED ||
+                                                guiAI.getPi(index).updateStatus === Enums.UPDATE_SUCCESS)
+                                        statusAnimation.duration = 10
+                                        statusAnimation.loops = 1
+                                        statusAnimation.restart()
+                                    }
                                 }
                             }
                         }
