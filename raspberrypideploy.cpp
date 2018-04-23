@@ -10,6 +10,7 @@ RaspberryPiDeploy::RaspberryPiDeploy(QObject *parent, int bayNumber) :
     m_remoteDeploySource(""),
     m_fileToDeploy(""),
     m_remoteDeployDestination(""),
+    m_controllerSubnet(""),
     m_raspberryPiIp(""),
     m_sshType(SSH_NONE),
     m_updateStatus(Enums::UPDATE_NONE),
@@ -239,6 +240,7 @@ void RaspberryPiDeploy::resetPiDeploy()
     m_remoteDeploySource.clear();
     m_fileToDeploy.clear();
     m_remoteDeployDestination.clear();
+    m_controllerSubnet.clear();
     m_raspberryPiIp.clear();
     m_sshType = SSH_NONE,
     setUpdateStatus(Enums::UPDATE_NONE);
@@ -347,6 +349,11 @@ void RaspberryPiDeploy::setUpdateStatus(Enums::UpdateStatus updateStatus)
 {
     m_updateStatus = updateStatus;
     emit updateStatusChanged();
+}
+
+void RaspberryPiDeploy::setControllerSubNet(const QString &controllerSubNet)
+{
+    m_controllerSubnet = controllerSubNet;
 }
 
 QString RaspberryPiDeploy::remoteDeployDestination() const

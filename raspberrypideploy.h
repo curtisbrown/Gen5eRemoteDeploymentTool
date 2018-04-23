@@ -33,12 +33,6 @@ public:
 
     void setUpdateStatus(Enums::UpdateStatus updateStatus);
 
-public slots:
-    Q_INVOKABLE void setRaspberryPiIp(const QString &raspberryPiIp);
-    Q_INVOKABLE void setRemoteDeploySource(const QString &remoteDeploySource);
-    Q_INVOKABLE void setRemoteDeployDestination(const QString &remoteDeployDestination);
-    Enums::UpdateStatus updateStatus() const;
-    void processRequest(QString ip);
 
 signals:
     void debugMessage(int, QString);
@@ -59,6 +53,12 @@ signals:
     void raspPiTransferFromBaySuccess();
 
 public slots:
+    Q_INVOKABLE void setControllerSubNet(const QString &controllerSubNet);
+    Q_INVOKABLE void setRaspberryPiIp(const QString &raspberryPiIp);
+    Q_INVOKABLE void setRemoteDeploySource(const QString &remoteDeploySource);
+    Q_INVOKABLE void setRemoteDeployDestination(const QString &remoteDeployDestination);
+    Enums::UpdateStatus updateStatus() const;
+    void processRequest(QString ip);
     void resetPiDeploy();
 
 private slots:
@@ -80,6 +80,7 @@ private:
     QString m_remoteDeploySource;
     QString m_fileToDeploy;
     QString m_remoteDeployDestination;
+    QString m_controllerSubnet;
     QString m_raspberryPiIp;
     SshType m_sshType;
     QTimer m_processTimeout;

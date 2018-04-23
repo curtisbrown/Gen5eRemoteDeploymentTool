@@ -15,7 +15,7 @@ public:
     explicit GuiAI(QObject *parent = nullptr);
 
 
-    Q_INVOKABLE RaspberryPiDeploy *getPi(int index);
+    Q_INVOKABLE RaspberryPiDeploy *piControl(int index);
 
 signals:
 

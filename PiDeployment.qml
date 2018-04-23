@@ -33,6 +33,9 @@ Rectangle {
                 model: ["172.168.1", "192.168.9"]
                 onActivated: {
                     subnet = currentText
+                    for(var i = 0; i < 16; ++i) {
+                        guiAI.piControl(i).setControllerSubNet(currentText)
+                    }
                 }
             }
         }
@@ -51,7 +54,7 @@ Rectangle {
                 model: ["192.168.1.80"]
                 onActivated: {
                     for(var i = 0; i < 16; ++i) {
-                        guiAI.getPi(i).setRaspberryPiIp(currentText)
+                        guiAI.piControl(i).setRaspberryPiIp(currentText)
                     }
                 }
             }
@@ -71,7 +74,7 @@ Rectangle {
                 model: ["/home/root", "/home"]
                 onActivated: {
                     for(var i = 0; i < 16; ++i) {
-                        guiAI.getPi(i).setRemoteDeployDestination(currentText)
+                        guiAI.piControl(i).setRemoteDeployDestination(currentText)
                     }
                 }
             }
@@ -136,11 +139,11 @@ Rectangle {
                             width: parent.width / 2
                             height: container.height - bayName.height - onlinesource.height - 10
                             text: "Deploy"
-                            enabled: guiAI.getPi(index).updateStatus !== Enums.UPDATE_IN_PROGRESS
+                            enabled: guiAI.piControl(index).updateStatus !== Enums.UPDATE_IN_PROGRESS
                             onPressed: {
                                 var temp = subnet + "." + (index + 1)
                                 console.log("deploying to Pi via" + temp)
-                                guiAI.getPi(index).processRequest(temp)
+                                guiAI.piControl(index).processRequest(temp)
                                 statusAnimation.start()
                             }
                         }
@@ -153,7 +156,7 @@ Rectangle {
                                 anchors.fill: parent
                                 fillMode: Image.PreserveAspectFit
                                 property var statusImages: ["", "qrc:/status/images/inProgress.gif", "qrc:/status/images/pass.png", "qrc:/status/images/fail.png"]
-                                source: statusImages[guiAI.getPi(index).updateStatus]
+                                source: statusImages[guiAI.piControl(index).updateStatus]
 
                                 RotationAnimator {
                                     id: statusAnimation
@@ -165,10 +168,10 @@ Rectangle {
                                 }
 
                                 Connections {
-                                    target: guiAI.getPi(index)
+                                    target: guiAI.piControl(index)
                                     onUpdateStatusChanged: {
-                                        if (guiAI.getPi(index).updateStatus === Enums.UPDATE_FAILED ||
-                                                guiAI.getPi(index).updateStatus === Enums.UPDATE_SUCCESS) {
+                                        if (guiAI.piControl(index).updateStatus === Enums.UPDATE_FAILED ||
+                                                guiAI.piControl(index).updateStatus === Enums.UPDATE_SUCCESS) {
                                             statusAnimation.duration = 10
                                             statusAnimation.loops = 1
                                             statusAnimation.restart()
@@ -196,7 +199,7 @@ Rectangle {
             visible = false
 
             for(var i = 0; i < 16; ++i) {
-                guiAI.getPi(i).setRemoteDeploySource(fileSelected.text)
+                guiAI.piControl(i).setRemoteDeploySource(fileSelected.text)
             }
         }
         onRejected: {

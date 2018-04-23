@@ -16,7 +16,7 @@ GuiAI::GuiAI(QObject *parent) :
     }
 }
 
-RaspberryPiDeploy *GuiAI::getPi(int index)
+RaspberryPiDeploy *GuiAI::piControl(int index)
 {
     if (index >= 16) {
         qFatal("Pi index out of bound");
