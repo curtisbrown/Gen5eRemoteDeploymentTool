@@ -14,6 +14,7 @@ class RaspberryPiDeploy : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(Enums::UpdateStatus updateStatus READ updateStatus WRITE setUpdateStatus NOTIFY updateStatusChanged)
+    Q_PROPERTY(bool remoteConnection READ remoteConnectionStatus WRITE setRemoteConnectionStatus NOTIFY remoteConnectionStatusChanged)
 
 public:
     RaspberryPiDeploy(QObject *parent = nullptr, int bayNumber = 0);
@@ -33,6 +34,8 @@ public:
 
     void setUpdateStatus(Enums::UpdateStatus updateStatus);
 
+    bool remoteConnectionStatus() const;
+    void setRemoteConnectionStatus(bool remoteConnectionStatus);
 
 signals:
     void debugMessage(int, QString);
@@ -51,6 +54,7 @@ signals:
 
     void noLockFile();
     void raspPiTransferFromBaySuccess();
+    void remoteConnectionStatusChanged();
 
 public slots:
     Q_INVOKABLE void setControllerSubNet(const QString &controllerSubNet);
@@ -60,11 +64,12 @@ public slots:
     Enums::UpdateStatus updateStatus() const;
     void processRequest(QString ip);
     void resetPiDeploy();
+    Q_INVOKABLE bool remoteConnectionActive();
 
 private slots:
     void executeRemoteCommand(QString ip, QString cmd, SshType sshtype);
     void remoteTransferController(QString ip, QString source, QString destination);
-
+    void remoteActiveResponse(int exitCode);
     void parseRemoteResponse();
 
 private:
@@ -75,6 +80,7 @@ private:
     QState *killRunningApp(QState *parent, QString ip);
 
     QProcess m_sshConnection;
+    QProcess m_pingProcess;
     QString m_remoteCommand;
     QString m_response;
     QString m_remoteDeploySource;
@@ -87,6 +93,7 @@ private:
     Enums::UpdateStatus m_updateStatus;
     int m_bayNumber;
     bool m_timedOut;
+    bool m_remoteConnectionStatus;
 };
 
 #endif // RASPBERRYPIDEPLOY_H

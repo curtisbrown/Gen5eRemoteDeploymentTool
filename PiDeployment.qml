@@ -35,6 +35,7 @@ Rectangle {
                     subnet = currentText
                     for(var i = 0; i < 16; ++i) {
                         guiAI.piControl(i).setControllerSubNet(currentText)
+                        guiAI.piControl(i).remoteConnectionActive()
                     }
                 }
             }
@@ -128,7 +129,12 @@ Rectangle {
                     anchors.fill: parent
                     spacing: 3
                     Text { id: bayName; text: "Bay " + (index + 1); anchors.horizontalCenter: parent.horizontalCenter }
-                    Text { id: onlinesource; text: baysDelegate.status; anchors.horizontalCenter: parent.horizontalCenter }
+                    Text {
+                        id: onlinesource;
+                        text: guiAI.piControl(index).remoteConnection === true ? "ONLINE" : "OFFLINE"
+                        color: guiAI.piControl(index).remoteConnection === true ? "green" : "red"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                    }
                     Row {
                         id: actions
                         width: parent.width - 20

@@ -15,7 +15,8 @@ RaspberryPiDeploy::RaspberryPiDeploy(QObject *parent, int bayNumber) :
     m_sshType(SSH_NONE),
     m_updateStatus(Enums::UPDATE_NONE),
     m_bayNumber(bayNumber),
-    m_timedOut(false)
+    m_timedOut(false),
+    m_remoteConnectionStatus(false)
 {
     connect (&m_sshConnection, &QProcess::readyRead, this, &RaspberryPiDeploy::parseRemoteResponse);
     connect (this, &RaspberryPiDeploy::cmdFailedToStart, this, [=]() {
@@ -25,6 +26,8 @@ RaspberryPiDeploy::RaspberryPiDeploy(QObject *parent, int bayNumber) :
 
     m_processTimeout.setInterval(30000); // 30 secs
     m_processTimeout.setSingleShot(true);
+
+    connect (&m_pingProcess, static_cast<void (QProcess::*)(int)>(&QProcess::finished), this, &RaspberryPiDeploy::remoteActiveResponse);
 }
 
 void RaspberryPiDeploy::executeRemoteCommand(QString ip, QString cmd, SshType sshType)
@@ -245,6 +248,53 @@ void RaspberryPiDeploy::resetPiDeploy()
     m_sshType = SSH_NONE,
     setUpdateStatus(Enums::UPDATE_NONE);
     m_timedOut = false;
+    setRemoteConnectionStatus(false);
+}
+
+/*
+ * bool RaspberryPiDeploy::remoteConnectionActive()
+ *
+ * Checks to see whether the connection to the Bay is active
+ * as without this connection, there is no connection to the
+ * Raspberry Pi
+ */
+bool RaspberryPiDeploy::remoteConnectionActive()
+{
+    QStringList pingArgs;
+    pingArgs << "-n 1"
+             << m_controllerSubnet
+             << "."
+             << QString::number(m_bayNumber);
+
+    m_pingProcess.start("ping", pingArgs);
+
+    if (!m_pingProcess.waitForStarted(3000)) {
+        emit debugMessage(m_bayNumber, QString("start error: %1").arg(m_pingProcess.errorString()));
+        return false;
+    } else {
+        return true;
+    }
+}
+
+void RaspberryPiDeploy::remoteActiveResponse(int exitCode)
+{
+    if (exitCode == QProcess::CrashExit) {
+        emit debugMessage(m_bayNumber, "ERROR: Issue with ping attempt");
+        setRemoteConnectionStatus(false);
+        return;
+    }
+
+    QString pingOutput = m_pingProcess.readAllStandardOutput();
+    QStringList outputLines = pingOutput.split("\n");
+    foreach (QString line, outputLines) {
+        if (line.contains("0% loss")) {
+            emit debugMessage(m_bayNumber, "Connection to bay active");
+            setRemoteConnectionStatus(true);
+            return;
+        }
+    }
+    emit debugMessage(m_bayNumber, "ERROR: Issue with connection to bay");
+    setRemoteConnectionStatus(false);
 }
 
 QState* RaspberryPiDeploy::prepareControllerSubStates(QState *parent, QString ip)
@@ -338,6 +388,17 @@ QState *RaspberryPiDeploy::killRunningApp(QState *parent, QString ip)
     killAppUsb1->addTransition(this, &RaspberryPiDeploy::bayCmdSuccess, done);
 
     return testState;
+}
+
+bool RaspberryPiDeploy::remoteConnectionStatus() const
+{
+    return m_remoteConnectionStatus;
+}
+
+void RaspberryPiDeploy::setRemoteConnectionStatus(bool remoteConnectionStatus)
+{
+    m_remoteConnectionStatus = remoteConnectionStatus;
+    emit remoteConnectionStatusChanged();
 }
 
 Enums::UpdateStatus RaspberryPiDeploy::updateStatus() const
