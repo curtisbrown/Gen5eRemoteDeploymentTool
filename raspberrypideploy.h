@@ -64,7 +64,7 @@ public slots:
     Enums::UpdateStatus updateStatus() const;
     void processRequest(QString ip);
     void resetPiDeploy();
-    Q_INVOKABLE bool remoteConnectionActive();
+    Q_INVOKABLE void remoteConnectionActive();
 
 private slots:
     void executeRemoteCommand(QString ip, QString cmd, SshType sshtype);
@@ -90,6 +90,7 @@ private:
     QString m_raspberryPiIp;
     SshType m_sshType;
     QTimer m_processTimeout;
+    QTimer m_pingRestart;
     Enums::UpdateStatus m_updateStatus;
     int m_bayNumber;
     bool m_timedOut;

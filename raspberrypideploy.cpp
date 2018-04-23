@@ -28,6 +28,8 @@ RaspberryPiDeploy::RaspberryPiDeploy(QObject *parent, int bayNumber) :
     m_processTimeout.setSingleShot(true);
 
     connect (&m_pingProcess, static_cast<void (QProcess::*)(int)>(&QProcess::finished), this, &RaspberryPiDeploy::remoteActiveResponse);
+    connect (&m_pingRestart, &QTimer::timeout, this, &RaspberryPiDeploy::remoteConnectionActive);
+    m_pingRestart.setInterval(10000); // 10 secs
 }
 
 void RaspberryPiDeploy::executeRemoteCommand(QString ip, QString cmd, SshType sshType)
@@ -249,6 +251,7 @@ void RaspberryPiDeploy::resetPiDeploy()
     setUpdateStatus(Enums::UPDATE_NONE);
     m_timedOut = false;
     setRemoteConnectionStatus(false);
+    m_pingRestart.stop();
 }
 
 /*
@@ -258,7 +261,7 @@ void RaspberryPiDeploy::resetPiDeploy()
  * as without this connection, there is no connection to the
  * Raspberry Pi
  */
-bool RaspberryPiDeploy::remoteConnectionActive()
+void RaspberryPiDeploy::remoteConnectionActive()
 {
     QStringList pingArgs;
     pingArgs << "-n 1"
@@ -266,14 +269,13 @@ bool RaspberryPiDeploy::remoteConnectionActive()
              << "."
              << QString::number(m_bayNumber);
 
-    m_pingProcess.start("ping", pingArgs);
+    if (m_pingProcess.state() != QProcess::Running)
+        m_pingProcess.start("ping", pingArgs);
+    else
+        return;
 
-    if (!m_pingProcess.waitForStarted(3000)) {
+    if (!m_pingProcess.waitForStarted(3000))
         emit debugMessage(m_bayNumber, QString("start error: %1").arg(m_pingProcess.errorString()));
-        return false;
-    } else {
-        return true;
-    }
 }
 
 void RaspberryPiDeploy::remoteActiveResponse(int exitCode)
@@ -309,6 +311,7 @@ QState* RaspberryPiDeploy::prepareControllerSubStates(QState *parent, QString ip
 
     connect(createDir, &QState::entered, this, [this, ip]() {
         emit debugMessage(m_bayNumber, "Creating Directory");
+        this->m_pingRestart.stop();
         this->executeRemoteCommand(ip, "mkdir /dev/pts", SSH_CMD_BAY_CONFIG);
     });
     connect(addEntryToFstab, &QState::entered, this, [this, ip]() {
@@ -318,6 +321,9 @@ QState* RaspberryPiDeploy::prepareControllerSubStates(QState *parent, QString ip
     connect(mountDir, &QState::entered, this, [this, ip]() {
         emit debugMessage(m_bayNumber, "Mounting directory");
         this->executeRemoteCommand(ip, "mount /dev/pts", SSH_CMD_BAY_CONFIG);
+    });
+    connect(done, &QFinalState::entered, this, [=](){
+       this->m_pingRestart.start();
     });
 
     createDir->addTransition(this, &RaspberryPiDeploy::configCmdSuccess, addEntryToFstab);
@@ -415,6 +421,7 @@ void RaspberryPiDeploy::setUpdateStatus(Enums::UpdateStatus updateStatus)
 void RaspberryPiDeploy::setControllerSubNet(const QString &controllerSubNet)
 {
     m_controllerSubnet = controllerSubNet;
+    m_pingRestart.start();
 }
 
 QString RaspberryPiDeploy::remoteDeployDestination() const
