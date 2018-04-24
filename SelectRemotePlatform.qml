@@ -31,7 +31,7 @@ Rectangle {
                 id: oktraButton
                 anchors.fill: parent
                 visible: platformSelectWindow.visible
-                Text { text: "Bay"; color: "blue"; font.bold: true; anchors.centerIn: parent }
+                Text { text: "Bay"; color: "navy"; font.bold: true; anchors.centerIn: parent }
                 onClicked: {
                     console.log("Bay Button Pressed");
                     platformSelectWindow.visible = false
@@ -48,7 +48,7 @@ Rectangle {
                 visible: platformSelectWindow.visible
                 width: 100
                 height: 50
-                Text { text: "Raspberry Pi"; color: "blue"; font.bold: true; anchors.centerIn: parent }
+                Text { text: "Raspberry Pi"; color: "navy"; font.bold: true; anchors.centerIn: parent }
                 onClicked: {
                     console.log("Raspberry Pi Button Pressed");
                     platformSelectWindow.visible = false

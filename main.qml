@@ -48,7 +48,7 @@ ApplicationWindow {
         anchors.centerIn: parent
         width: 200
         height: 50
-        Text { text: "Deploy File to Remote location"; color: "blue"; font.bold: true; anchors.centerIn: parent }
+        Text { text: "Deploy File to Remote location"; color: "navy"; font.bold: true; anchors.centerIn: parent }
         onClicked: selectPlatform.visible = true
     }
 

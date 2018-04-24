@@ -25,7 +25,7 @@ Rectangle {
             Label {
                 width: parent.width / 3
                 wrapMode: Label.NoWrap
-                color: "blue"
+                color: "navy"
                 font.pixelSize: 16
                 font.italic: true
                 text: "Select Controller Subnet"
@@ -50,7 +50,7 @@ Rectangle {
             Label {
                 width: parent.width / 3
                 wrapMode: Label.NoWrap
-                color: "blue"
+                color: "navy"
                 font.pixelSize: 16
                 font.italic: true
                 text: "Select Raspberry Pi IP"
@@ -73,7 +73,7 @@ Rectangle {
             Label {
                 width: parent.width / 3
                 wrapMode: Label.NoWrap
-                color: "blue"
+                color: "navy"
                 font.pixelSize: 16
                 font.italic: true
                 text: "Select remote destination"
@@ -96,7 +96,7 @@ Rectangle {
             Label {
                 width: parent.width / 3
                 wrapMode: Label.NoWrap
-                color: "blue"
+                color: "navy"
                 font.pixelSize: 16
                 font.italic: true
                 text: "Select file to deploy"
@@ -131,14 +131,14 @@ Rectangle {
                 id: baysDelegate
                 width: grid.cellWidth
                 height: grid.cellHeight
-                border.color: "blue"
+                border.color: "navy"
                 radius: width / 9
 
                 Column {
                     id: container
                     anchors.fill: parent
                     spacing: 3
-                    Text { id: bayName; text: "Bay " + (index + 1); color: "blue"; font.bold: true; anchors.horizontalCenter: parent.horizontalCenter }
+                    Text { id: bayName; text: "Bay " + (index + 1); color: "navy"; font.bold: true; anchors.horizontalCenter: parent.horizontalCenter }
                     Text {
                         id: onlinesource;
                         text: guiAI.piControl(index).remoteConnection === true ? "ONLINE" : "OFFLINE"
