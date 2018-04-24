@@ -263,14 +263,8 @@ void RaspberryPiDeploy::resetPiDeploy()
  */
 void RaspberryPiDeploy::remoteConnectionActive()
 {
-    QStringList pingArgs;
-    pingArgs << "-n 1"
-             << m_controllerSubnet
-             << "."
-             << QString::number(m_bayNumber);
-
     if (m_pingProcess.state() != QProcess::Running)
-        m_pingProcess.start("ping", pingArgs);
+        m_pingProcess.start(QString("ping -n 1 %1").arg(QString(m_controllerSubnet + "." + QString::number(m_bayNumber))));
     else
         return;
 
@@ -282,18 +276,20 @@ void RaspberryPiDeploy::remoteActiveResponse(int exitCode)
 {
     if (exitCode == QProcess::CrashExit) {
         emit debugMessage(m_bayNumber, "ERROR: Issue with ping attempt");
+        emit debugMessage(m_bayNumber, m_pingProcess.readAllStandardOutput());
         setRemoteConnectionStatus(false);
         return;
     }
 
     QString pingOutput = m_pingProcess.readAllStandardOutput();
-    QStringList outputLines = pingOutput.split("\n");
-    foreach (QString line, outputLines) {
-        if (line.contains("0% loss")) {
-            emit debugMessage(m_bayNumber, "Connection to bay active");
-            setRemoteConnectionStatus(true);
-            return;
-        }
+    if (!pingOutput.isEmpty()
+            && !pingOutput.contains("Request timed out")
+            && !pingOutput.contains("100% loss")
+            && !pingOutput.contains("unreachable")) {
+        emit debugMessage(m_bayNumber, pingOutput);
+        emit debugMessage(m_bayNumber, "Connection to bay active");
+        setRemoteConnectionStatus(true);
+        return;
     }
     emit debugMessage(m_bayNumber, "ERROR: Issue with connection to bay");
     setRemoteConnectionStatus(false);
