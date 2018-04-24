@@ -23,8 +23,11 @@ Rectangle {
             width: parent.width
 
             Label {
-                width: parent.width / 2
-                wrapMode: Label.Wrap
+                width: parent.width / 3
+                wrapMode: Label.NoWrap
+                color: "blue"
+                font.pixelSize: 16
+                font.italic: true
                 text: "Select Controller Subnet"
             }
             ComboBox {
@@ -45,8 +48,11 @@ Rectangle {
             width: parent.width
 
             Label {
-                width: parent.width / 2
-                wrapMode: Label.Wrap
+                width: parent.width / 3
+                wrapMode: Label.NoWrap
+                color: "blue"
+                font.pixelSize: 16
+                font.italic: true
                 text: "Select Raspberry Pi IP"
             }
             ComboBox {
@@ -65,8 +71,11 @@ Rectangle {
             width: parent.width
 
             Label {
-                width: parent.width / 2
-                wrapMode: Label.Wrap
+                width: parent.width / 3
+                wrapMode: Label.NoWrap
+                color: "blue"
+                font.pixelSize: 16
+                font.italic: true
                 text: "Select remote destination"
             }
             ComboBox {
@@ -85,8 +94,11 @@ Rectangle {
             width: parent.width
 
             Label {
-                width: parent.width / 2
-                wrapMode: Label.Wrap
+                width: parent.width / 3
+                wrapMode: Label.NoWrap
+                color: "blue"
+                font.pixelSize: 16
+                font.italic: true
                 text: "Select file to deploy"
             }
             Button {
@@ -119,16 +131,14 @@ Rectangle {
                 id: baysDelegate
                 width: grid.cellWidth
                 height: grid.cellHeight
-                border.color: "black"
+                border.color: "blue"
                 radius: width / 9
-
-                property string status: "ONLINE"
 
                 Column {
                     id: container
                     anchors.fill: parent
                     spacing: 3
-                    Text { id: bayName; text: "Bay " + (index + 1); anchors.horizontalCenter: parent.horizontalCenter }
+                    Text { id: bayName; text: "Bay " + (index + 1); color: "blue"; font.bold: true; anchors.horizontalCenter: parent.horizontalCenter }
                     Text {
                         id: onlinesource;
                         text: guiAI.piControl(index).remoteConnection === true ? "ONLINE" : "OFFLINE"
@@ -146,6 +156,7 @@ Rectangle {
                             height: container.height - bayName.height - onlinesource.height - 10
                             text: "Deploy"
                             enabled: guiAI.piControl(index).updateStatus !== Enums.UPDATE_IN_PROGRESS
+                                     && guiAI.piControl(index).remoteConnection !== false
                             onPressed: {
                                 var temp = subnet + "." + (index + 1)
                                 console.log("deploying to Pi via" + temp)

@@ -1,7 +1,9 @@
-import QtQuick 2.7
-import QtQuick.Controls 2.0
+import QtQuick 2.9
+import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
 import Qt.labs.platform 1.0
+import QtQuick.Dialogs 1.2
+import QtQuick.Window 2.3
 
 ApplicationWindow {
     visible: true
@@ -10,15 +12,12 @@ ApplicationWindow {
     title: qsTr("Gen5e Deployment Assistant")
 
     Item {
-        width: parent.width / 3.5
-        height: parent.height / 8
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
+        anchors.fill: parent
+
         Image {
             id: logo
-            source: "qrc:/status/images/ctdiLogo.png"
-            anchors.right: parent.right
-            anchors.bottom: parent.bottom
+            source: "qrc:/status/images/ctdiBackground.png"
+            opacity: 0.4
             fillMode: Image.PreserveAspectFit
         }
     }
@@ -45,9 +44,11 @@ ApplicationWindow {
         }
     }
 
-    Button {
+    RoundButton {
         anchors.centerIn: parent
-        text: "Deploy File to Remote location"
+        width: 200
+        height: 50
+        Text { text: "Deploy File to Remote location"; color: "blue"; font.bold: true; anchors.centerIn: parent }
         onClicked: selectPlatform.visible = true
     }
 

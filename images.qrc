@@ -4,5 +4,7 @@
         <file>images/inProgress.gif</file>
         <file>images/pass.png</file>
         <file>images/ctdiLogo.png</file>
+        <file>images/ctdiBackground.png</file>
     </qresource>
+    <qresource prefix="/"/>
 </RCC>
